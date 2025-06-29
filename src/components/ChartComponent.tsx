@@ -1,5 +1,5 @@
-import React from 'react'
-import { Line } from 'react-chartjs-2'
+import React from 'react';
+import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,8 +8,10 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
-} from 'chart.js'
+  Legend,
+  type ChartOptions,
+  type ChartData
+} from 'chart.js';
 
 ChartJS.register(
   CategoryScale,
@@ -19,7 +21,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend
-)
+);
 
 export type ChartProps = {
   prices: number[];
@@ -27,9 +29,8 @@ export type ChartProps = {
   dates: string[];
 };
 
-// components/ChartComponent.tsx
 const ChartComponent = ({ prices, volumes, dates }: ChartProps) => {
-  const data = {
+  const data: ChartData<'line'> = {
     labels: dates,
     datasets: [
       {
@@ -37,26 +38,52 @@ const ChartComponent = ({ prices, volumes, dates }: ChartProps) => {
         data: prices,
         borderColor: '#0088cc',
         yAxisID: 'y',
+        tension: 0.1
       },
       {
         label: 'Объём (млн)',
         data: volumes.map(v => v / 1_000_000),
         borderColor: '#ff6384',
         yAxisID: 'y1',
+        tension: 0.1
       }
     ]
   };
 
-  const options = {
+  const options: ChartOptions<'line'> = {
     responsive: true,
-    interaction: { mode: 'index' },
+    interaction: {
+      mode: 'index',
+      intersect: false
+    },
     scales: {
-      y: { type: 'linear', display: true, position: 'left' },
-      y1: { type: 'linear', display: true, position: 'right' }
+      y: {
+        type: 'linear',
+        display: true,
+        position: 'left',
+        title: {
+          display: true,
+          text: 'Цена (USD)',
+          color: '#0088cc'
+        }
+      },
+      y1: {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        title: {
+          display: true,
+          text: 'Объём (млн)',
+          color: '#ff6384'
+        },
+        grid: {
+          drawOnChartArea: false
+        }
+      }
     }
   };
 
   return <Line data={data} options={options} />;
 };
 
-export default ChartComponent
+export default ChartComponent;

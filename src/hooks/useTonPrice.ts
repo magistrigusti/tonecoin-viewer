@@ -26,7 +26,7 @@ export const useTonPrice = () => {
     return {
       usd: res.data['the-open-network'].usd,
       rub: res.data['the-open-network'].rub,
-      changeUsd: res.data['the-open-network'].usd_24h_change, // Было usd_24_change (ошибка в названии поля)
+      changeUsd: res.data['the-open-network'].usd_24h_change,
       changeRub: res.data['the-open-network'].rub_24h_change,
     };
   };
@@ -38,10 +38,11 @@ export const useTonPrice = () => {
     );
 
     return {
-      prices: res.data.prices.map(([ price]) => price),
-      volumes: res.data.total_volumes.map(([ volume]) => volume), // Было totla_volumes (опечатка)
-      dates: res.data.prices.map(([timestamp]) => new Date(timestamp).toLocaleDateString('ru-RU'))
-        
+      prices: res.data.prices.map(([, price]) => price),
+      volumes: res.data.total_volumes.map(([, volume]) => volume),
+      dates: res.data.prices.map(([timestamp]) => 
+        new Date(timestamp).toLocaleDateString('ru-RU')
+      ),
     };
   };
 
