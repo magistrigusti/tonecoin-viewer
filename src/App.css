@@ -1,0 +1,29 @@
+/* App.css */
+
+.loading {
+  color: #666;
+}
+
+.price-card {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+}
+
+.up { color : green; }
+.down { color: red; }
+
+.chart-container {
+  margin-top: 20px;
+  height: 300px;
+}
+
+h1 {
+  color: #0088cc;
+}
