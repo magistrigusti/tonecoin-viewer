@@ -21,24 +21,42 @@ ChartJS.register(
   Legend
 )
 
-const ChartComponent: React.FC = () => {
+export type ChartProps = {
+  prices: number[];
+  volumes: number[];
+  dates: string[];
+};
+
+// components/ChartComponent.tsx
+const ChartComponent = ({ prices, volumes, dates }: ChartProps) => {
   const data = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    labels: dates,
     datasets: [
       {
-        label: 'TON Price (USD)',
-        data: [2.5, 2.7, 2.8, 2.6, 2.9, 2.85],
+        label: 'Цена (USD)',
+        data: prices,
         borderColor: '#0088cc',
-        tension: 0.1
+        yAxisID: 'y',
+      },
+      {
+        label: 'Объём (млн)',
+        data: volumes.map(v => v / 1_000_000),
+        borderColor: '#ff6384',
+        yAxisID: 'y1',
       }
     ]
-  }
+  };
 
-  return (
-    <div className="chart-container">
-      <Line data={data} />
-    </div>
-  )
-}
+  const options = {
+    responsive: true,
+    interaction: { mode: 'index' },
+    scales: {
+      y: { type: 'linear', display: true, position: 'left' },
+      y1: { type: 'linear', display: true, position: 'right' }
+    }
+  };
+
+  return <Line data={data} options={options} />;
+};
 
 export default ChartComponent
