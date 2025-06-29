@@ -1,7 +1,6 @@
 // src/hooks/useTonPrice.ts
 import axios from 'axios';
 
-// Типы для ответа API
 type CurrentPriceResponse = {
   'the-open-network': {
     usd: number;
@@ -12,12 +11,13 @@ type CurrentPriceResponse = {
 };
 
 type HistoryResponse = {
-  prices: [number, number][]; // [timestamp, price]
-  total_volumes: [number, number][]; // [timestamp, volume]
+  prices: [number, number][];
+  total_volumes: [number, number][];
 };
 
+export type Timeframe = '24h' | '7d' | '30d' | '90d' | '1y';
+
 export const useTonPrice = () => {
-  // Текущая цена
   const fetchCurrentPrice = async () => {
     const res = await axios.get<CurrentPriceResponse>(
       'https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd,rub&include_24hr_change=true'
@@ -31,17 +31,50 @@ export const useTonPrice = () => {
     };
   };
 
-  // Исторические данные
-  const fetchHistory = async () => {
+  const fetchHistory = async (timeframe: Timeframe) => {
+    let days, interval;
+    
+    switch(timeframe) {
+      case '24h': 
+        days = 1;
+        interval = 'hourly';
+        break;
+      case '7d': 
+        days = 7;
+        interval = 'hourly';
+        break;
+      case '30d': 
+        days = 30;
+        interval = 'daily';
+        break;
+      case '90d': 
+        days = 90;
+        interval = 'daily';
+        break;
+      case '1y': 
+        days = 365;
+        interval = 'daily';
+        break;
+      default: 
+        days = 30;
+        interval = 'daily';
+    }
+
     const res = await axios.get<HistoryResponse>(
-      'https://api.coingecko.com/api/v3/coins/the-open-network/market_chart?vs_currency=usd&days=30&interval=daily'
+      `https://api.coingecko.com/api/v3/coins/the-open-network/market_chart?vs_currency=usd&days=${days}&interval=${interval}`
     );
 
     return {
       prices: res.data.prices.map(([, price]) => price),
       volumes: res.data.total_volumes.map(([, volume]) => volume),
       dates: res.data.prices.map(([timestamp]) => 
-        new Date(timestamp).toLocaleDateString('ru-RU')
+        new Date(timestamp).toLocaleString('ru-RU', {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+          hour: timeframe === '24h' || timeframe === '7d' ? 'numeric' : undefined,
+          minute: timeframe === '24h' || timeframe === '7d' ? 'numeric' : undefined
+        })
       ),
     };
   };
