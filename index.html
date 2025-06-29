@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TON Price</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .price-card {
+      background: #f5f5f5;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .up {
+      color: green;
+    }
+    .down {
+      color: red;
+    }
+    .loading {
+      color: #666;
+    }
+    .error {
+      color: red;
+    }
+    h1 {
+      color: #0088cc;
+    }
+    .last-updated {
+      font-size: 12px;
+      color: #666;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>TON Coin Price</h1>
+  <div id="price-container">
+    <div class="loading">Loading...</div>
+  </div>
+  <div id="last-updated" class="last-updated"></div>
+
+  <script>
+    const COINGECKO_API = "https://api.coingecko.com/api/v3";
+    
+    async function getTonRates() {
+      try {
+        const response = await axios.get(`${COINGECKO_API}/simple/price?ids=the-open-network&vs_currencies=usd,rub&include_24hr_change=true`);
+        
+        return {
+          prices: {
+            USD: response.data['the-open-network'].usd,
+            RUB: response.data['the-open-network'].rub
+          },
+          diff_24h: {
+            USD: response.data['the-open-network'].usd_24h_change,
+            RUB: response.data['the-open-network'].rub_24h_change
+          }
+        };
+      } catch (error) {
+        console.error("Error:", error);
+        throw error;
+      }
+    }
+
+    function formatPrice(price) {
+      return price.toFixed(4).replace(/\.?0+$/, '');
+    }
+
+    function renderPrices(data) {
+      const container = document.getElementById('price-container');
+      const now = new Date();
+      
+      container.innerHTML = `
+        <div class="price-card">
+          <h2>USD: $${formatPrice(data.prices.USD)}</h2>
+          <p class="${data.diff_24h.USD >= 0 ? 'up' : 'down'}">
+            24h: ${data.diff_24h.USD >= 0 ? '+' : ''}${data.diff_24h.USD.toFixed(2)}%
+          </p>
+        </div>
+        <div class="price-card">
+          <h2>RUB: ${data.prices.RUB.toFixed(2)}₽</h2>
+          <p class="${data.diff_24h.RUB >= 0 ? 'up' : 'down'}">
+            24h: ${data.diff_24h.RUB >= 0 ? '+' : ''}${data.diff_24h.RUB.toFixed(2)}%
+          </p>
+        </div>
+      `;
+      
+      document.getElementById('last-updated').textContent = `Last updated: ${now.toLocaleTimeString()}`;
+    }
+
+    function renderError(message) {
+      document.getElementById('price-container').innerHTML = `
+        <div class="error">${message}</div>
+      `;
+      document.getElementById('last-updated').textContent = '';
+    }
+
+    async function updatePrices() {
+      try {
+        const data = await getTonRates();
+        renderPrices(data);
+      } catch (error) {
+        renderError('Failed to load TON price. Please try again later.');
+      }
+    }
+
+    // Первоначальная загрузка
+    updatePrices();
+    
+    // Обновление каждые 30 секунд
+    setInterval(updatePrices, 30000);
+  </script>
+</body>
+</html>
