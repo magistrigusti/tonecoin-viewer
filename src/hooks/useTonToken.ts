@@ -1,6 +1,6 @@
 // src/hooks/useTonToken.ts
 import { useState, useEffect, useCallback } from 'react';
-import { tonApiService } from '../services/tonApi';
+import { tonApiClientService } from '../services/tonApiClient';
 import type { TokenInfo, TokenPrice, TokenHistory } from '../types/ton';
 
 export type Timeframe = '24h' | '7d' | '30d' | '90d' | '1y';
@@ -14,7 +14,7 @@ export const useTonToken = (tokenAddress: string) => {
 
   const fetchTokenInfo = useCallback(async () => {
     try {
-      const info = await tonApiService.getTokenInfo(tokenAddress);
+      const info = await tonApiClientService.getTokenInfo(tokenAddress);
       setTokenInfo(info);
     } catch (err) {
       setError('Failed to fetch token info');
@@ -24,7 +24,7 @@ export const useTonToken = (tokenAddress: string) => {
 
   const fetchTokenPrice = useCallback(async () => {
     try {
-      const price = await tonApiService.getTokenPrice(tokenAddress);
+      const price = await tonApiClientService.getTokenPrice(tokenAddress);
       setTokenPrice(price);
     } catch (err) {
       setError('Failed to fetch token price');
@@ -45,7 +45,7 @@ export const useTonToken = (tokenAddress: string) => {
         default: days = 30;
       }
 
-      const history = await tonApiService.getTokenHistory(tokenAddress, days);
+      const history = await tonApiClientService.getTokenHistory(tokenAddress, days);
       setTokenHistory(history);
     } catch (err) {
       setError('Failed to fetch token history');

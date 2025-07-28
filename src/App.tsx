@@ -8,8 +8,8 @@ import ApiTest from './components/ApiTest';
 import { useTonToken, type Timeframe } from './hooks/useTonToken';
 import './App.css';
 
-// Ваш реальный токен
-const DEFAULT_TOKEN_ADDRESS = 'AHPIGD2RQOJXJYYAAAADP4KWHNUCY2LSOZBYXM273NBPEA4KOATYZRFCYWF6VK65FYL44VI';
+// Пример адреса TON токена (Jetton)
+const DEFAULT_TOKEN_ADDRESS = 'EQDk2VTvn04SUKJrW7rXahzdF8_Qi6utb0wj3Fvo5Hnfqs01';
 
 function App() {
   const [tokenAddress, setTokenAddress] = useState(DEFAULT_TOKEN_ADDRESS);

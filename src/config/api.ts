@@ -1,6 +1,9 @@
 // src/config/api.ts
 export const API_CONFIG = {
-  // TON Center API ключ (получить на https://toncenter.com/)
+  // TON API ключ (получить на https://toncenter.com/)
+  TON_API_KEY: process.env.VITE_TON_API_KEY || '',
+  
+  // TON Center API (старый)
   TON_CENTER_API_KEY: process.env.VITE_TON_CENTER_API_KEY || '',
   
   // DeDust API (пока не требует ключа)
@@ -16,7 +19,20 @@ export const API_CONFIG = {
   REFRESH_INTERVAL: 30000, // 30 секунд
 };
 
-// Проверка наличия API ключа
+// Проверка наличия TON API ключа
+export const hasTonApiKey = (): boolean => {
+  return !!API_CONFIG.TON_API_KEY;
+};
+
+// Получение TON API ключа с предупреждением
+export const getTonApiKey = (): string => {
+  if (!API_CONFIG.TON_API_KEY) {
+    console.warn('TON API ключ не настроен. Некоторые функции могут быть ограничены.');
+  }
+  return API_CONFIG.TON_API_KEY;
+};
+
+// Проверка наличия TON Center API ключа
 export const hasApiKey = (): boolean => {
   return !!API_CONFIG.TON_CENTER_API_KEY;
 };
