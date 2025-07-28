@@ -1,56 +1,107 @@
 // src/App.tsx
-import { useEffect, useState } from 'react';
-import ChartComponent from './components/ChartComponent';
-import PriceCard from './components/PriceCard';
-import { useTonPrice, type Timeframe } from './hooks/useTonPrice';
+import { useState, useEffect } from 'react';
+import TokenCard from './components/TokenCard';
+import TokenChart from './components/TokenChart';
+import TokenInput from './components/TokenInput';
+import ApiStatus from './components/ApiStatus';
+import { useTonToken, type Timeframe } from './hooks/useTonToken';
 import './App.css';
-import type { CurrentPriceData, HistoryData } from './types/coinGecko';
+
+// Адрес вашего токена - замените на реальный адрес
+const DEFAULT_TOKEN_ADDRESS = 'EQD...'; // Вставьте адрес вашего токена
 
 function App() {
-  const { fetchCurrentPrice, fetchHistory } = useTonPrice();
-  const [currentData, setCurrentData] = useState<CurrentPriceData | null>(null);
-  const [historyData, setHistoryData] = useState<HistoryData | null>(null);
+  const [tokenAddress, setTokenAddress] = useState(DEFAULT_TOKEN_ADDRESS);
   const [timeframe, setTimeframe] = useState<Timeframe>('30d');
-  const [isLoading, setIsLoading] = useState(true);
+  
+  const {
+    tokenInfo,
+    tokenPrice,
+    tokenHistory,
+    isLoading,
+    error,
+    refreshData,
+    fetchTokenHistory
+  } = useTonToken(tokenAddress);
 
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        const [current, history] = await Promise.all([
-          fetchCurrentPrice(),
-          fetchHistory(timeframe)
-        ]);
-        setCurrentData(current);
-        setHistoryData(history);
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const handleTimeframeChange = (newTimeframe: Timeframe) => {
+    setTimeframe(newTimeframe);
+    fetchTokenHistory(newTimeframe);
+  };
 
-    loadData();
-    const interval = setInterval(loadData, 30000);
-    return () => clearInterval(interval);
-  }, [timeframe]);
+  const handleTokenAddressChange = (address: string) => {
+    if (address.trim()) {
+      setTokenAddress(address.trim());
+    }
+  };
 
-  if (isLoading || !currentData || !historyData) {
-    return <div className="loading">Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="app">
+        <div className="loading">
+          <div className="loading-spinner"></div>
+          <p>Загрузка данных токена...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app">
+        <div className="error">
+          <h2>Ошибка загрузки</h2>
+          <p>{error}</p>
+          <button onClick={() => refreshData()}>Попробовать снова</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!tokenInfo || !tokenPrice) {
+    return (
+      <div className="app">
+        <div className="welcome">
+          <h1>TON Token Viewer</h1>
+          <p>Введите адрес токена для начала работы</p>
+          <ApiStatus />
+          <TokenInput
+            onTokenAddressChange={handleTokenAddressChange}
+            currentAddress={tokenAddress}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="app">
-      <h1>TON Coin Price</h1>
-      <PriceCard currency="USD" value={currentData.usd} change={currentData.changeUsd} />
-      <PriceCard currency="RUB" value={currentData.rub} change={currentData.changeRub} />
-      <ChartComponent
-        prices={historyData.prices}
-        volumes={historyData.volumes}
-        dates={historyData.dates}
-        timeframe={timeframe}
-        onTimeframeChange={(tf) => setTimeframe(tf)}
-      />
+      <div className="app-header">
+        <h1>TON Token Viewer</h1>
+        <ApiStatus />
+        <TokenInput
+          onTokenAddressChange={handleTokenAddressChange}
+          currentAddress={tokenAddress}
+          isLoading={isLoading}
+        />
+      </div>
+
+      <TokenCard tokenInfo={tokenInfo} tokenPrice={tokenPrice} />
+      
+      {tokenHistory.length > 0 && (
+        <TokenChart
+          history={tokenHistory}
+          timeframe={timeframe}
+          onTimeframeChange={handleTimeframeChange}
+          tokenSymbol={tokenInfo.symbol}
+        />
+      )}
+
+      <div className="app-footer">
+        <p>Данные обновляются каждые 30 секунд</p>
+        <p>Источник: DeDust.io API</p>
+      </div>
     </div>
   );
 }
