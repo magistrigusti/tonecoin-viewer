@@ -8,7 +8,7 @@ import { useTonToken, type Timeframe } from './hooks/useTonToken';
 import './App.css';
 
 // Адрес вашего токена - замените на реальный адрес
-const DEFAULT_TOKEN_ADDRESS = 'EQD...'; // Вставьте адрес вашего токена
+const DEFAULT_TOKEN_ADDRESS = 'AHPIGD2RQOJXJYYAAAADP4KWHNUCY2LSOZBYXM273NBPEA4KOATYZRFCYWF6VK65FYL44VI'; // Ваш токен
 
 function App() {
   const [tokenAddress, setTokenAddress] = useState(DEFAULT_TOKEN_ADDRESS);
