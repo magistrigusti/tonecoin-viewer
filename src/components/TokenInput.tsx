@@ -16,7 +16,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const validateAddress = (address: string): boolean => {
-    // Упрощенная валидация TON адреса
+    // Упрощенная валидация TON адреса или API ключа
     if (!address.trim()) {
       setError('Адрес токена не может быть пустым');
       return false;
@@ -25,6 +25,18 @@ const TokenInput: React.FC<TokenInputProps> = ({
     // Проверяем длину (должен быть достаточно длинным)
     if (address.length < 10) {
       setError('Адрес слишком короткий');
+      return false;
+    }
+    
+    // Если это длинный ключ (API ключ), принимаем его
+    if (address.length > 50) {
+      setError(null);
+      return true;
+    }
+    
+    // Для обычных адресов проверяем формат
+    if (!address.startsWith('EQ') && !address.startsWith('UQ') && address.length < 50) {
+      setError('Неверный формат адреса TON');
       return false;
     }
     
@@ -87,6 +99,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
           <ul>
             <li>EQD... - Jetton токен</li>
             <li>UQD... - NFT коллекция</li>
+            <li>Длинный ключ - API токен</li>
           </ul>
         </div>
       </form>

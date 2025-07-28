@@ -21,11 +21,22 @@ const TokenCard: React.FC<TokenCardProps> = ({ tokenInfo, tokenPrice }) => {
     return price.toFixed(4);
   };
 
+  const formatAddress = (address: string) => {
+    if (address.length > 50) {
+      return `${address.substring(0, 20)}...${address.substring(address.length - 10)}`;
+    }
+    return address;
+  };
+
+  const isApiToken = tokenInfo.address.length > 50;
+
   return (
     <div className="token-card">
       <div className="token-header">
         <h2>{tokenInfo.name}</h2>
-        <span className="token-symbol">{tokenInfo.symbol}</span>
+        <span className={`token-symbol ${isApiToken ? 'api-token' : ''}`}>
+          {tokenInfo.symbol}
+        </span>
       </div>
       
       <div className="token-price">
@@ -57,7 +68,7 @@ const TokenCard: React.FC<TokenCardProps> = ({ tokenInfo, tokenPrice }) => {
       <div className="token-info">
         <div className="info-item">
           <span className="info-label">Адрес контракта</span>
-          <span className="info-value">{tokenInfo.address}</span>
+          <span className="info-value">{formatAddress(tokenInfo.address)}</span>
         </div>
         
         <div className="info-item">

@@ -16,6 +16,19 @@ export class TonApiService {
       console.log(`Fetching token info for: ${address}`);
       console.log(`Using API key: ${this.apiKey ? 'Set' : 'Not set'}`);
       
+      // Проверяем, является ли адрес API ключом
+      if (address.length > 50 && !address.startsWith('EQ') && !address.startsWith('UQ')) {
+        console.log('Detected API key format, using custom token info');
+        return {
+          address: address,
+          symbol: 'TON_API',
+          name: 'TON API Token',
+          decimals: 9,
+          totalSupply: '1000000000',
+          owner: 'API User'
+        };
+      }
+      
       // Используем TON Center API для получения информации о токене
       const response = await axios.get(`${API_CONFIG.TON_CENTER_API_BASE}/getTokenData`, {
         params: {
@@ -45,11 +58,11 @@ export class TonApiService {
       // Возвращаем базовую информацию для демонстрации
       return {
         address: address,
-        symbol: 'MY_TOKEN',
-        name: `My TON Token`,
+        symbol: 'TON_API',
+        name: 'TON API Token',
         decimals: 9,
         totalSupply: '1000000000',
-        owner: 'Me'
+        owner: 'API User'
       };
     }
   }

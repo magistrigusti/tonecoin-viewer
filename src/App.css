@@ -333,6 +333,11 @@
   font-size: 0.9rem;
 }
 
+.token-symbol.api-token {
+  background: #ff6b35;
+  color: white;
+}
+
 .token-price {
   margin-bottom: 24px;
 }
