@@ -4,11 +4,12 @@ import TokenCard from './components/TokenCard';
 import TokenChart from './components/TokenChart';
 import TokenInput from './components/TokenInput';
 import ApiStatus from './components/ApiStatus';
+import ApiTest from './components/ApiTest';
 import { useTonToken, type Timeframe } from './hooks/useTonToken';
 import './App.css';
 
-// Тестовый адрес для демонстрации
-const DEFAULT_TOKEN_ADDRESS = 'EQDtest123'; // Тестовый адрес
+// Ваш реальный токен
+const DEFAULT_TOKEN_ADDRESS = 'AHPIGD2RQOJXJYYAAAADP4KWHNUCY2LSOZBYXM273NBPEA4KOATYZRFCYWF6VK65FYL44VI';
 
 function App() {
   const [tokenAddress, setTokenAddress] = useState(DEFAULT_TOKEN_ADDRESS);
@@ -84,6 +85,7 @@ function App() {
           <h1>TON Token Viewer</h1>
           <p>Введите адрес токена для начала работы</p>
           <ApiStatus />
+          <ApiTest />
           <TokenInput
             onTokenAddressChange={handleTokenAddressChange}
             currentAddress={tokenAddress}

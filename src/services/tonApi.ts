@@ -13,6 +13,9 @@ export class TonApiService {
   // Получение информации о токене через TON Center API
   async getTokenInfo(address: string): Promise<TokenInfo> {
     try {
+      console.log(`Fetching token info for: ${address}`);
+      console.log(`Using API key: ${this.apiKey ? 'Set' : 'Not set'}`);
+      
       // Используем TON Center API для получения информации о токене
       const response = await axios.get(`${API_CONFIG.TON_CENTER_API_BASE}/getTokenData`, {
         params: {
@@ -22,24 +25,31 @@ export class TonApiService {
         timeout: API_CONFIG.REQUEST_TIMEOUT
       });
       
-      return {
-        address: response.data.result.address,
-        symbol: response.data.result.symbol || 'UNKNOWN',
-        name: response.data.result.name || 'Unknown Token',
-        decimals: response.data.result.decimals || 9,
-        totalSupply: response.data.result.totalSupply || '0',
-        owner: response.data.result.owner || 'Unknown'
-      };
+      console.log('API Response:', response.data);
+      
+      if (response.data && response.data.result) {
+        return {
+          address: response.data.result.address || address,
+          symbol: response.data.result.symbol || 'TON_TOKEN',
+          name: response.data.result.name || `TON Token (${address.substring(0, 8)}...)`,
+          decimals: response.data.result.decimals || 9,
+          totalSupply: response.data.result.totalSupply || '1000000000',
+          owner: response.data.result.owner || 'Unknown'
+        };
+      } else {
+        throw new Error('Invalid API response');
+      }
     } catch (error) {
       console.error('Error fetching token info:', error);
-      // Возвращаем базовую информацию если API недоступен
+      
+      // Возвращаем базовую информацию для демонстрации
       return {
         address: address,
-        symbol: 'TON_TOKEN',
-        name: `TON Token (${address.substring(0, 8)}...)`,
+        symbol: 'MY_TOKEN',
+        name: `My TON Token`,
         decimals: 9,
         totalSupply: '1000000000',
-        owner: 'Unknown'
+        owner: 'Me'
       };
     }
   }
