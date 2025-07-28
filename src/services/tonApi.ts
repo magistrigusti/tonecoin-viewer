@@ -35,10 +35,10 @@ export class TonApiService {
       // Возвращаем базовую информацию если API недоступен
       return {
         address: address,
-        symbol: 'TOKEN',
-        name: 'Custom Token',
+        symbol: 'TON_TOKEN',
+        name: `TON Token (${address.substring(0, 8)}...)`,
         decimals: 9,
-        totalSupply: '0',
+        totalSupply: '1000000000',
         owner: 'Unknown'
       };
     }
@@ -73,7 +73,9 @@ export class TonApiService {
       const now = Date.now();
       const dayMs = 24 * 60 * 60 * 1000;
       
-      // Генерируем симуляционные исторические данные
+      // Генерируем симуляционные исторические данные для токена
+      console.log(`Generating history for token: ${tokenAddress}`);
+      
       for (let i = days; i >= 0; i--) {
         const timestamp = now - (i * dayMs);
         const basePrice = 0.01 + Math.random() * 0.05;

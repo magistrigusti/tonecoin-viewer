@@ -1,5 +1,5 @@
 // src/App.tsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import TokenCard from './components/TokenCard';
 import TokenChart from './components/TokenChart';
 import TokenInput from './components/TokenInput';
@@ -7,8 +7,8 @@ import ApiStatus from './components/ApiStatus';
 import { useTonToken, type Timeframe } from './hooks/useTonToken';
 import './App.css';
 
-// Адрес вашего токена - замените на реальный адрес
-const DEFAULT_TOKEN_ADDRESS = 'AHPIGD2RQOJXJYYAAAADP4KWHNUCY2LSOZBYXM273NBPEA4KOATYZRFCYWF6VK65FYL44VI'; // Ваш токен
+// Тестовый адрес для демонстрации
+const DEFAULT_TOKEN_ADDRESS = 'EQDtest123'; // Тестовый адрес
 
 function App() {
   const [tokenAddress, setTokenAddress] = useState(DEFAULT_TOKEN_ADDRESS);
@@ -23,6 +23,16 @@ function App() {
     refreshData,
     fetchTokenHistory
   } = useTonToken(tokenAddress);
+
+  // Отладочная информация
+  console.log('App state:', {
+    tokenAddress,
+    isLoading,
+    error,
+    tokenInfo,
+    tokenPrice,
+    historyLength: tokenHistory?.length
+  });
 
   const handleTimeframeChange = (newTimeframe: Timeframe) => {
     setTimeframe(newTimeframe);
@@ -49,11 +59,20 @@ function App() {
   if (error) {
     return (
       <div className="app">
+        <div className="app-header">
+          <h1>TON Token Viewer</h1>
+          <ApiStatus />
+        </div>
         <div className="error">
           <h2>Ошибка загрузки</h2>
           <p>{error}</p>
           <button onClick={() => refreshData()}>Попробовать снова</button>
         </div>
+        <TokenInput
+          onTokenAddressChange={handleTokenAddressChange}
+          currentAddress={tokenAddress}
+          isLoading={isLoading}
+        />
       </div>
     );
   }

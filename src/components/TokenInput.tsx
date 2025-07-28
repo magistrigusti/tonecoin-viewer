@@ -16,18 +16,14 @@ const TokenInput: React.FC<TokenInputProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const validateAddress = (address: string): boolean => {
-    // Простая валидация TON адреса
+    // Упрощенная валидация TON адреса
     if (!address.trim()) {
       setError('Адрес токена не может быть пустым');
       return false;
     }
     
-    if (!address.startsWith('EQ') && !address.startsWith('UQ')) {
-      setError('Неверный формат адреса TON');
-      return false;
-    }
-    
-    if (address.length < 48) {
+    // Проверяем длину (должен быть достаточно длинным)
+    if (address.length < 10) {
       setError('Адрес слишком короткий');
       return false;
     }

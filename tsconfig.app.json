@@ -9,7 +9,7 @@
     "composite": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
