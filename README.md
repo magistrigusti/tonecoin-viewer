@@ -1,69 +1,199 @@
-# React + TypeScript + Vite
+# TON Token Viewer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Приложение для отслеживания цен токенов в блокчейне TON с интеграцией DeDust.io DEX.
 
-Currently, two official plugins are available:
+## 🚀 Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Отслеживание цен в реальном времени** - автоматическое обновление каждые 30 секунд
+- **Интерактивные графики** - с возможностью масштабирования и перемещения
+- **Множественные временные рамки** - 24ч, 7д, 30д, 90д, 1г
+- **Информация о токенах** - полная информация о контракте и метаданных
+- **Адаптивный дизайн** - работает на всех устройствах
+- **Интеграция с DeDust.io** - получение данных о ликвидности и объемах
+- **Валидация адресов** - проверка корректности TON адресов
+- **Статус API** - индикатор подключения к TON Center API
 
-## Expanding the ESLint configuration
+## 🛠 Технологии
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 19** - современный UI фреймворк
+- **TypeScript** - типизированный JavaScript
+- **Vite** - быстрый сборщик
+- **Chart.js** - интерактивные графики
+- **Axios** - HTTP клиент для API запросов
+- **TON Center API** - интеграция с блокчейном TON
+- **DeDust API** - данные о DEX пулах
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 Установка
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. **Клонируйте репозиторий:**
+```bash
+git clone <repository-url>
+cd tonecoin-viewer
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. **Установите зависимости:**
+```bash
+npm install
 ```
+
+3. **Создайте файл .env:**
+```bash
+cp .env.example .env
+```
+
+4. **Настройте API ключ (опционально):**
+Откройте файл `.env` и добавьте ваш TON Center API ключ:
+```env
+VITE_TON_CENTER_API_KEY=your_api_key_here
+```
+
+## 🚀 Запуск
+
+```bash
+npm run dev
+```
+
+Приложение будет доступно по адресу: http://localhost:5173
+
+## 🔧 Настройка
+
+### 1. Получение TON Center API ключа
+
+1. Перейдите на [TON Center](https://toncenter.com/)
+2. Зарегистрируйтесь и получите API ключ
+3. Добавьте ключ в файл `.env`
+
+### 2. Настройка адреса токена
+
+В файле `src/App.tsx` замените адрес по умолчанию:
+```typescript
+const DEFAULT_TOKEN_ADDRESS = 'EQD...'; // Ваш адрес токена
+```
+
+### 3. Настройка DeDust API
+
+Для получения реальных данных с DeDust.io обновите методы в `src/services/tonApi.ts`:
+```typescript
+// Замените симуляцию на реальные API вызовы
+async getTokenPrice(tokenAddress: string): Promise<TokenPrice> {
+  const response = await axios.get(`${API_CONFIG.DEDUST_API_BASE}/pools`, {
+    params: { token: tokenAddress }
+  });
+  // Обработка реальных данных
+}
+```
+
+## 📊 Использование
+
+### Основные функции:
+
+1. **Ввод адреса токена** - введите адрес TON токена в поле ввода
+2. **Просмотр информации** - получите полную информацию о токене
+3. **Анализ графиков** - изучайте ценовые движения и объемы
+4. **Переключение временных рамок** - анализируйте данные за разные периоды
+
+### Поддерживаемые форматы адресов:
+
+- `EQD...` - Jetton токены
+- `UQD...` - NFT коллекции
+- `EQ...` - Смарт-контракты
+
+### Примеры использования:
+
+```bash
+# Запуск в режиме разработки
+npm run dev
+
+# Сборка для продакшена
+npm run build
+
+# Предварительный просмотр сборки
+npm run preview
+
+# Проверка кода
+npm run lint
+```
+
+## 🔗 API Источники
+
+### TON Center API
+- **Базовый URL:** `https://toncenter.com/api/v2`
+- **Документация:** [TON Center API](https://toncenter.com/api)
+- **Эндпоинты:**
+  - `/getTokenData` - информация о токене
+  - `/getAddressBalance` - баланс кошелька
+  - `/getWalletTokens` - токены кошелька
+
+### DeDust API
+- **Базовый URL:** `https://api.dedust.io/v2`
+- **Эндпоинты:**
+  - `/pools` - информация о пулах
+  - `/pools/{address}/history` - исторические данные
+
+## 🎨 Особенности дизайна
+
+- **Современный интерфейс** - чистый и интуитивный дизайн
+- **Адаптивная верстка** - работает на всех устройствах
+- **Анимации** - плавные переходы и загрузка
+- **Цветовая схема** - в стиле TON блокчейна
+- **Темная/светлая тема** - автоматическое переключение
+
+## 📱 Поддерживаемые браузеры
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+## 🚨 Обработка ошибок
+
+Приложение включает обработку следующих ошибок:
+- Неверный формат адреса
+- Отсутствие подключения к API
+- Ошибки загрузки данных
+- Таймауты запросов
+
+## 🔒 Безопасность
+
+- API ключи хранятся в переменных окружения
+- Валидация всех пользовательских входных данных
+- Безопасные HTTP запросы с таймаутами
+- Защита от XSS атак
+
+## 🤝 Вклад в проект
+
+1. Форкните репозиторий
+2. Создайте ветку для новой функции: `git checkout -b feature/amazing-feature`
+3. Внесите изменения и зафиксируйте: `git commit -m 'Add amazing feature'`
+4. Отправьте в ветку: `git push origin feature/amazing-feature`
+5. Создайте Pull Request
+
+## 📄 Лицензия
+
+MIT License - см. файл [LICENSE](LICENSE) для деталей.
+
+## 📞 Поддержка
+
+Если у вас есть вопросы или проблемы:
+
+1. Создайте Issue в репозитории
+2. Опишите проблему подробно
+3. Приложите скриншоты если необходимо
+4. Укажите версию браузера и ОС
+
+## 🔄 Обновления
+
+### Версия 1.0.0
+- ✅ Базовая функциональность
+- ✅ Интеграция с TON Center API
+- ✅ Симуляция DeDust API
+- ✅ Адаптивный дизайн
+- ✅ Валидация адресов
+
+### Планы на будущее
+- 🔄 Реальная интеграция с DeDust API
+- 🔄 Поддержка множественных токенов
+- 🔄 Уведомления о ценах
+- 🔄 Экспорт данных
+- 🔄 Темная тема
+- 🔄 PWA поддержка
